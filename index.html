@@ -196,16 +196,15 @@
   <div class="card shadow-sm mb-3">
     <div class="card-body position-relative">
 
-      <button class="delete-btn" onclick="deleteVideo(2)">
+      <button class="delete-btn" onclick="deleteVideo(${video.id})">
   ✕
 </button>
 
       <iframe 
-        class="w-100 rounded mb-2"
-        src="https://player.bilibili.com/player.html?bvid=${video.bvid}"
-        frameborder="0"
-        allowfullscreen>
-      </iframe>
+      src="https://player.bilibili.com/player.html?bvid=${video.bvid}"
+      frameborder="0"
+      allowfullscreen>
+    </iframe>
 
       <a 
         href="https://www.bilibili.com/video/${video.bvid}" 
@@ -257,10 +256,6 @@
   }
 
   async function deleteVideo(id) {
-  const confirmDelete = confirm("确定删除这个视频吗？");
-
-  if (!confirmDelete) return;
-
   const { error } = await supabaseClient
     .from("videos")
     .delete()
