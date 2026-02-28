@@ -193,15 +193,28 @@
   const videoCard = document.createElement("div");
 
   videoCard.innerHTML = `
-  <div class="video-card">
-    <button class="delete-btn" onclick="deleteVideo(${video.id})">
+  <div class="card shadow-sm mb-3">
+    <div class="card-body position-relative">
+
+      <button class="delete-btn" onclick="deleteVideo(2)">
   ✕
 </button>
-    <iframe 
-      src="https://player.bilibili.com/player.html?bvid=${video.bvid}"
-      frameborder="0"
-      allowfullscreen>
-    </iframe>
+
+      <iframe 
+        class="w-100 rounded mb-2"
+        src="https://player.bilibili.com/player.html?bvid=${video.bvid}"
+        frameborder="0"
+        allowfullscreen>
+      </iframe>
+
+      <a 
+        href="https://www.bilibili.com/video/${video.bvid}" 
+        target="_blank"
+        class="btn btn-primary w-100">
+        🔗 跳转到B站
+      </a>
+
+    </div>
   </div>
 `;
 
@@ -222,6 +235,7 @@
     const url = document.getElementById("videoInput").value;
     const category = document.getElementById("categoryInput").value || "默认";
     const match = url.match(/BV[0-9A-Za-z]+/i);
+    
 
     if (!match) {
       alert("无法识别BV号");
