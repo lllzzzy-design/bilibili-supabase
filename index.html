@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>B站视频收藏（Supabase版）</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<h1>🎬 我的Bilibili收藏（云端版）</h1>
+
+<input id="categoryInput" placeholder="分类名称">
+<input id="videoInput" placeholder="粘贴B站视频链接" style="width:300px;">
+<button onclick="addVideo()">添加视频</button>
+
+<hr>
+
+<div id="videos"></div>
+
+<script>
+  const supabaseUrl = "https://yubkvcvwvdvcvhvviziu.supabase.co";
+  const supabaseKey = "sb_publishable_bF9ourabT4dwUDTsoJi0Ng_H6CXo0ik";
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function loadVideos() {
+    const { data, error } = await supabaseClient
+      .from("videos")
+      .select("*")
+      .order("id", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    render(data);
+  }
+
+  function render(videos) {
+    const container = document.getElementById("videos");
+    container.innerHTML = "";
+
+    videos.forEach(video => {
+      container.innerHTML += `
+        <div>
+          <p>分类: ${video.category}</p>
+          <iframe 
+            src="https://player.bilibili.com/player.html?bvid=${video.bvid}"
+            width="500"
+            height="300"
+            frameborder="0"
+            allowfullscreen>
+          </iframe>
+          <hr/>
+        </div>
+      `;
+    });
+  }
+
+  async function addVideo() {
+    const url = document.getElementById("videoInput").value;
+    const category = document.getElementById("categoryInput").value || "默认";
+    const match = url.match(/BV\w+/);
+
+    if (!match) {
+      alert("无法识别BV号");
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from("videos")
+      .insert([{ bvid: match[0], category }]);
+
+    if (error) {
+      console.error(error);
+      alert("插入失败");
+      return;
+    }
+
+    document.getElementById("videoInput").value = "";
+    loadVideos();
+  }
+
+  loadVideos();
+</script>
+
+</body>
+</html>
