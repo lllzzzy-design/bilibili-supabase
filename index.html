@@ -2,24 +2,88 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>B站视频收藏（Supabase版）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B站视频收藏</title>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    input {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    iframe {
+      width: 100%;
+      height: 200px;
+      border-radius: 8px;
+    }
+
+    @media (min-width: 768px) {
+      iframe {
+        height: 350px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>🎬 我的Bilibili收藏（云端版）</h1>
+<div class="container">
+
+<h1>🎬 我的Bilibili收藏</h1>
 
 <input id="categoryInput" placeholder="分类名称">
-<input id="videoInput" placeholder="粘贴B站视频链接" style="width:300px;">
+<input id="videoInput" placeholder="粘贴B站视频链接">
 <button onclick="addVideo()">添加视频</button>
-
-<hr>
 
 <div id="videos"></div>
 
+</div>
+
 <script>
   const supabaseUrl = "https://yubkvcvwvdvcvhvviziu.supabase.co";
-  const supabaseKey = "sb_publishable_bF9ourabT4dwUDTsoJi0Ng_H6CXo0ik";
+  const supabaseKey = "sb_publishable_bF9ourabT4dwUDTsoJi0Ng_H6CXo0i public key";
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   async function loadVideos() {
@@ -42,16 +106,13 @@
 
     videos.forEach(video => {
       container.innerHTML += `
-        <div>
-          <p>分类: ${video.category}</p>
+        <div class="card">
+          <p><strong>分类：</strong>${video.category}</p>
           <iframe 
             src="https://player.bilibili.com/player.html?bvid=${video.bvid}"
-            width="500"
-            height="300"
             frameborder="0"
             allowfullscreen>
           </iframe>
-          <hr/>
         </div>
       `;
     });
@@ -60,7 +121,7 @@
   async function addVideo() {
     const url = document.getElementById("videoInput").value;
     const category = document.getElementById("categoryInput").value || "默认";
-    const match = url.match(/BV\w+/);
+    const match = url.match(/BV\\w+/);
 
     if (!match) {
       alert("无法识别BV号");
