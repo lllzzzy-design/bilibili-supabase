@@ -101,27 +101,59 @@
   }
 
   function render(videos) {
-    const container = document.getElementById("videos");
-    container.innerHTML = "";
+  const container = document.getElementById("videos");
+  container.innerHTML = "";
 
-    videos.forEach(video => {
-      container.innerHTML += `
-        <div class="card">
-          <p><strong>分类：</strong>${video.category}</p>
-          <iframe 
-            src="https://player.bilibili.com/player.html?bvid=${video.bvid}"
-            frameborder="0"
-            allowfullscreen>
-          </iframe>
-        </div>
+  const grouped = {};
+  videos.forEach(video => {
+    if (!grouped[video.category]) {
+      grouped[video.category] = [];
+    }
+    grouped[video.category].push(video);
+  });
+
+  Object.keys(grouped).forEach(category => {
+    const videoList = grouped[category];
+
+    const categoryDiv = document.createElement("div");
+    categoryDiv.className = "card";
+
+    categoryDiv.innerHTML = `
+      <h3 style="cursor:pointer;">
+        📂 ${category} (${videoList.length})
+      </h3>
+      <div class="video-list" style="display:none;"></div>
+    `;
+
+    const videoContainer = categoryDiv.querySelector(".video-list");
+
+    videoList.forEach(video => {
+      const videoCard = document.createElement("div");
+      videoCard.innerHTML = `
+        <iframe 
+          src="https://player.bilibili.com/player.html?bvid=${video.bvid}"
+          frameborder="0"
+          allowfullscreen>
+        </iframe>
+        <br/>
       `;
+      videoContainer.appendChild(videoCard);
     });
-  }
+
+    const title = categoryDiv.querySelector("h3");
+    title.addEventListener("click", () => {
+      const isHidden = videoContainer.style.display === "none";
+      videoContainer.style.display = isHidden ? "block" : "none";
+    });
+
+    container.appendChild(categoryDiv);
+  });
+}
 
   async function addVideo() {
     const url = document.getElementById("videoInput").value;
     const category = document.getElementById("categoryInput").value || "默认";
-    const match = url.match(/BV\\w+/);
+    const match = url.match(/BV[0-9A-Za-z]+/i);
 
     if (!match) {
       alert("无法识别BV号");
